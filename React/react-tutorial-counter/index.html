@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>React Counter</title>
+  <style>
+    body {
+      font-size: 16px;
+      font-family: Verdana, sans-serif;
+    }
+
+    .container {
+      width: 330px;
+      margin: 20px auto;
+    }
+
+    .container ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .container li {
+      width: 100px;
+      height: 100px;
+      line-height: 100px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 5px;
+      margin: 0 5px 10px;
+    }
+
+    .total-count {
+      text-align: right;
+      padding: 5px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+<script type="text/babel">
+  (() => {
+    function Counter(props) {
+      return (
+        <li
+          style={{backgroundColor: props.counter.color}}
+          onClick={() => props.countUp(props.counter)}
+        >
+          {props.counter.id} : {props.counter.count}
+        </li>
+      );
+    }
+
+    function CounterList(props) {
+      const counters = props.counters.map(counter => {
+        return (
+          <Counter
+            counter={counter}
+            key={counter.id}
+            countUp={props.countUp}
+          />
+        );
+      });
+
+      return (
+        <ul>
+          {counters}
+        </ul>
+      );
+    }
+
+    class App extends React.Component {
+      constructor() {
+        super();
+        this.state = {
+          counters: [
+            {id: 'A', count: 0, color: 'tomato'},
+            {id: 'B', count: 0, color: 'skyblue'},
+            {id: 'C', count: 0, color: 'limegreen'}
+          ],
+          total: 0
+        };
+        this.countUp = this.countUp.bind(this);
+      }
+
+      countUp(counter) {
+        this.setState(prevState => {
+          const counters = prevState.counters.map(counter => {
+            return {id: counter.id, count: counter.count, color: counter.color}
+          });
+
+          const pos = counters.map(counter => {
+            return counter.id;
+          }).indexOf(counter.id);
+
+          counters[pos].count++;
+
+          return {
+            counters: counters,
+            total: prevState.total + 1
+          };
+        });
+      }
+
+      render() {
+        return (
+          <div className="container">
+            <CounterList
+              counters={this.state.counters}
+              countUp={this.countUp}
+            />
+            <div className="total-count">TOTAL COUNT: {this.state.total}</div>
+          </div>
+        );
+      }
+    }
+
+    ReactDOM.render(
+      <App/>,
+      document.getElementById('root')
+    );
+  })();
+</script>
+</body>
+</html>
